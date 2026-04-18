@@ -189,8 +189,9 @@ export const useGameSessionStore = create<GameSessionState>((set) => ({
       }
 
       const nextTicketBankId = state.tickets.length;
+      const expiredTicketIdSet = new Set(expiredTicketIds);
       const tickets = state.tickets.filter(
-        (ticket) => !expiredTicketIds.includes(ticket.id),
+        (ticket) => !expiredTicketIdSet.has(ticket.id),
       );
 
       if (!shouldCreateTicket) {

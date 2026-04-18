@@ -1,6 +1,7 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useGameSessionStore } from "@/lib/game-session/store";
 import { useTicketTimeRemaining } from "@/lib/game-session/use-ticket-time-remaining";
 
@@ -9,6 +10,7 @@ interface TicketDetailsProps {
 }
 
 export function Ticket({ ticketId }: TicketDetailsProps) {
+  const router = useRouter();
   const ticket = useGameSessionStore((state) =>
     state.tickets.find((candidate) => candidate.id === ticketId),
   );
@@ -18,8 +20,14 @@ export function Ticket({ ticketId }: TicketDetailsProps) {
     timeLimitSeconds: ticket?.timeLimitSeconds ?? null,
   });
 
+  useEffect(() => {
+    if (!ticket) {
+      router.replace("/");
+    }
+  }, [router, ticket]);
+
   if (!ticket) {
-    redirect("/");
+    return null;
   }
 
   const ticketWithTimeRemaining = {

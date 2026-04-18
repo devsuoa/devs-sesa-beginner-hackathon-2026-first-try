@@ -1,7 +1,7 @@
 "use client";
 
+import { TicketList } from "@/components/tickets/ticket-list";
 import { useGameSessionStore } from "@/lib/game-session/store";
-import { TicketList } from "../tickets/ticket-list";
 
 export function Sidebar() {
   const strikes = useGameSessionStore((state) => state.strikes);
