@@ -48,11 +48,7 @@ const ALIEN_NAMES = [
   "Mog",
 ];
 
-const ALIEN_TYPES = [
-  "Rulix",
-  "Grob",
-  "Kindor",
-];
+const ALIEN_TYPES = ["Rulix", "Grob", "Kindor"];
 
 const initialGameSession: GameSession = {
   tickets: [],
@@ -229,7 +225,9 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       set((s) => ({
         tickets: [...s.tickets, createGeneratedTicket(now, question)],
         lastTicketCreatedAt: now,
-        ticketIntervalSeconds: getNextTicketIntervalSeconds(s.ticketIntervalSeconds),
+        ticketIntervalSeconds: getNextTicketIntervalSeconds(
+          s.ticketIntervalSeconds,
+        ),
       }));
     });
   },

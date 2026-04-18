@@ -5,13 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch index.ts",
-    "start": "bun run index.ts"
+    "start": "bun run index.ts",
+    "lint": "biome check .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "openai": "^6.34.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3"
   }
