@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "bun --watch index.ts",
     "start": "bun run index.ts",
-    "lint": "biome check .",
-    "format": "biome format --write ."
+    "lint": "bun run --cwd .. lint:express",
+    "format": "bun run --cwd .. format:express"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -16,7 +16,6 @@
     "openai": "^6.34.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.12",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6"
   }
