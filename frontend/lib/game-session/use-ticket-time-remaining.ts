@@ -37,8 +37,12 @@ export function useTicketTimeRemaining({
     let frameId = 0;
 
     const updateTimeRemaining = () => {
-      setTimeRemainingMs(getTimeRemainingMs(createdAt, timeLimitSeconds));
-      frameId = window.requestAnimationFrame(updateTimeRemaining);
+      const remainingMs = getTimeRemainingMs(createdAt, timeLimitSeconds);
+      setTimeRemainingMs(remainingMs);
+
+      if (remainingMs > 0) {
+        frameId = window.requestAnimationFrame(updateTimeRemaining);
+      }
     };
 
     updateTimeRemaining();
