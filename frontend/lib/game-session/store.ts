@@ -76,17 +76,11 @@ function getNextTicketIntervalSeconds(currentIntervalSeconds: number) {
   );
 }
 
-function getExpiredTicketIds(tickets: Ticket[], now = Date.now()) {
-  return tickets.reduce<string[]>((expiredTicketIds, ticket) => {
-    if (
-      ticket.status === "pending" &&
-      now - ticket.createdAt >= ticket.timeLimitSeconds * 1000
-    ) {
-      expiredTicketIds.push(ticket.id);
-    }
-
-    return expiredTicketIds;
-  }, []);
+function isTicketExpired(ticket: Ticket, now: number) {
+  return (
+    ticket.status === "pending" &&
+    now - ticket.createdAt >= ticket.timeLimitSeconds * 1000
+  );
 }
 
 function createTicket(input: CreateTicketInput): Ticket {
@@ -101,26 +95,18 @@ function createTicket(input: CreateTicketInput): Ticket {
   };
 }
 
-function createGeneratedAlien(): Alien {
-  return {
-    name: ALIEN_NAMES[Math.floor(Math.random() * ALIEN_NAMES.length)],
-    type: ALIEN_TYPES[Math.floor(Math.random() * ALIEN_TYPES.length)],
-  };
-}
-
-function getGeneratedTicketDifficulty() {
-  return Math.random() < CRITICAL_TICKET_CHANCE;
-}
-
 function createGeneratedTicket(
   createdAt: number,
   question: Question,
   criticalOverride?: boolean,
 ): Ticket {
-  const critical = criticalOverride ?? getGeneratedTicketDifficulty();
+  const critical = criticalOverride ?? Math.random() < CRITICAL_TICKET_CHANCE;
 
   return createTicket({
-    alien: createGeneratedAlien(),
+    alien: {
+      name: ALIEN_NAMES[Math.floor(Math.random() * ALIEN_NAMES.length)],
+      type: ALIEN_TYPES[Math.floor(Math.random() * ALIEN_TYPES.length)],
+    },
     critical,
     timeLimitSeconds: critical
       ? CRITICAL_TICKET_TIME_LIMIT_SECONDS
@@ -198,23 +184,21 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       return;
     }
 
-    const expiredTicketIds = getExpiredTicketIds(state.tickets, now);
+    const remainingTickets = state.tickets.filter(
+      (ticket) => !isTicketExpired(ticket, now),
+    );
+    const expiredCount = state.tickets.length - remainingTickets.length;
     const lastTicketCreatedAt = state.lastTicketCreatedAt ?? now;
     const shouldCreateTicket =
       now - lastTicketCreatedAt >= state.ticketIntervalSeconds * 1000;
 
-    if (expiredTicketIds.length === 0 && !shouldCreateTicket) {
+    if (expiredCount === 0 && !shouldCreateTicket) {
       return;
     }
 
-    const expiredTicketIdSet = new Set(expiredTicketIds);
-    const tickets = state.tickets.filter(
-      (ticket) => !expiredTicketIdSet.has(ticket.id),
-    );
-
     set({
-      tickets,
-      strikes: state.strikes + expiredTicketIds.length,
+      tickets: remainingTickets,
+      strikes: state.strikes + expiredCount,
     });
 
     if (!shouldCreateTicket) {
