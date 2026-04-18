@@ -1,5 +1,4 @@
 import os
-from pickle import FROZENSET
 from random import randint
 
 import requests
@@ -48,7 +47,7 @@ def check_answer(data: AnswerInput):
         EXPRESS_URL,
         json={
             "answer": data.answer,
-            "rightAnswer": questions_answers[data.id][1],
+            "modelAnswer": questions_answers[data.id][1],
         },
     )
 
