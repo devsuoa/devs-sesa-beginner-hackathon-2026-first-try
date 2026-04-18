@@ -1,0 +1,8 @@
+[project]
+name = "hackathon-template"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[default,standard]>=0.135.3",
+]
