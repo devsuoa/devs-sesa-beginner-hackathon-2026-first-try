@@ -35,24 +35,14 @@ class AnswerInput(BaseModel):
 def get_question():
     # randint is inclusive (includes both end points)
     id = randint(0, len(questions_answers) - 1)
-    question = questions_answers[id][0]
+    text, _, critical = questions_answers[id]
 
-    return {"id": id, "question": question}
-
-@app.get("/v2/getQuestion")
-def get_question():
-    # randint is inclusive (includes both end points)
-    id = randint(0, len(questions_answers) - 1)
-    question = questions_answers[id][0]
-
-    critical = questions_answers[id][2] # true or false
-
-    return {"id": id, "question": question, "critical": critical}
+    return {"id": id, "text": text, "critical": critical}
 
 
 @app.post("/checkAnswer")
 def check_answer(data: AnswerInput):
-    # {"id": data.id, "answer": data.input_answer}
+    # {"id": data.id, "answer": data.answer}
     result = requests.post(
         EXPRESS_URL,
         json={

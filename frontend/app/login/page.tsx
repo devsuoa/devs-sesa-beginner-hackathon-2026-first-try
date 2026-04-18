@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export default function Page() {
   return (
@@ -26,5 +26,9 @@ function InputField() {
 }
 
 function Button() {
-  return <button className=" w-fit p-2 border rounded-xl">Login</button>;
+  return (
+    <button type="submit" className="w-fit p-2 border rounded-xl">
+      Login
+    </button>
+  );
 }

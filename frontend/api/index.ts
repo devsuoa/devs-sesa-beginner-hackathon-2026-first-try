@@ -3,7 +3,8 @@ import { env } from "@/lib/env";
 
 export interface GetQuestionResponse {
   id: number;
-  question: string;
+  text: string;
+  critical: boolean;
 }
 
 export interface CheckAnswerValues {

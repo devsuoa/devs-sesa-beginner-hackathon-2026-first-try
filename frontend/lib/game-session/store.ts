@@ -14,7 +14,7 @@ const TICKET_INTERVAL_DECREASE_SECONDS = 2;
 const MINIMUM_TICKET_INTERVAL_SECONDS = 10;
 const NORMAL_TICKET_TIME_LIMIT_SECONDS = 90;
 const CRITICAL_TICKET_TIME_LIMIT_SECONDS = 30;
-const CRITICAL_TICKET_CHANCE = 0.2;
+
 const createTicketId = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
   8,
@@ -86,7 +86,6 @@ function createTicket(input: CreateTicketInput): Ticket {
   return {
     id: createTicketId(),
     alien: input.alien,
-    critical: input.critical,
     status: "pending",
     timeLimitSeconds: input.timeLimitSeconds,
     createdAt: input.createdAt ?? Date.now(),
@@ -94,30 +93,18 @@ function createTicket(input: CreateTicketInput): Ticket {
   };
 }
 
-function createGeneratedTicket(
-  createdAt: number,
-  question: Question,
-  criticalOverride?: boolean,
-): Ticket {
-  const critical = criticalOverride ?? Math.random() < CRITICAL_TICKET_CHANCE;
-
+function createGeneratedTicket(createdAt: number, question: Question): Ticket {
   return createTicket({
     alien: {
       name: ALIEN_NAMES[Math.floor(Math.random() * ALIEN_NAMES.length)],
       type: ALIEN_TYPES[Math.floor(Math.random() * ALIEN_TYPES.length)],
     },
-    critical,
-    timeLimitSeconds: critical
+    timeLimitSeconds: question.critical
       ? CRITICAL_TICKET_TIME_LIMIT_SECONDS
       : NORMAL_TICKET_TIME_LIMIT_SECONDS,
     createdAt,
     question,
   });
-}
-
-async function fetchQuestion(): Promise<Question> {
-  const response = await getQuestion();
-  return { id: response.id, text: response.question };
 }
 
 export const useGameSessionStore = create<GameSessionState>((set, get) => ({
@@ -128,7 +115,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
     }
 
     const startedAt = Date.now();
-    const question = await fetchQuestion();
+    const question = await getQuestion();
 
     set({
       tickets: [createGeneratedTicket(startedAt, question, false)],
@@ -204,7 +191,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       return;
     }
 
-    fetchQuestion().then((question) => {
+    getQuestion().then((question) => {
       set((s) => ({
         tickets: [...s.tickets, createGeneratedTicket(now, question)],
         lastTicketCreatedAt: now,

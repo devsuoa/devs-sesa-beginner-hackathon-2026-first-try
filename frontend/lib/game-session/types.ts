@@ -8,12 +8,12 @@ export interface Alien {
 export interface Question {
   id: number;
   text: string;
+  critical: boolean;
 }
 
 export interface Ticket {
   id: string;
   alien: Alien;
-  critical: boolean;
   status: TicketStatus;
   timeLimitSeconds: number;
   createdAt: number;
@@ -31,7 +31,6 @@ export interface GameSession {
 
 export interface CreateTicketInput {
   alien: Alien;
-  critical: boolean;
   timeLimitSeconds: number;
   createdAt?: number;
   question: Question;

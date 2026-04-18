@@ -40,7 +40,7 @@ export function Ticket({ ticketId }: TicketDetailsProps) {
       <section className="flex flex-wrap items-start justify-between gap-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">{ticket.alien.name}</h1>
-          <pre className="font-mono">
+          <pre className="font-mono whitespace-pre-wrap">
             {JSON.stringify(ticketWithTimeRemaining, null, 2)}
           </pre>
         </div>
