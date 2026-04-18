@@ -2,7 +2,6 @@ import { customAlphabet } from "nanoid";
 import { create } from "zustand";
 import { getQuestion } from "@/api";
 import type {
-  Alien,
   CreateTicketInput,
   GameSession,
   Question,
