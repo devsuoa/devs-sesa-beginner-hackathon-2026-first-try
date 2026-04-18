@@ -118,7 +118,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
     const question = await getQuestion();
 
     set({
-      tickets: [createGeneratedTicket(startedAt, question, false)],
+      tickets: [createGeneratedTicket(startedAt, question)],
       strikes: initialGameSession.strikes,
       resolved: initialGameSession.resolved,
       isActive: true,
