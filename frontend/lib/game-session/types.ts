@@ -5,6 +5,11 @@ export interface Alien {
   type: string;
 }
 
+export interface Question {
+  id: number;
+  text: string;
+}
+
 export interface Ticket {
   id: string;
   alien: Alien;
@@ -12,6 +17,7 @@ export interface Ticket {
   status: TicketStatus;
   timeLimitSeconds: number;
   createdAt: number;
+  question: Question;
 }
 
 export interface GameSession {
@@ -28,4 +34,5 @@ export interface CreateTicketInput {
   critical: boolean;
   timeLimitSeconds: number;
   createdAt?: number;
+  question: Question;
 }

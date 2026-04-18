@@ -1,9 +1,11 @@
 import os
+from pickle import FROZENSET
 from random import randint
 
 import requests
 from data import questions_answers
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from fastapi import FastAPI
@@ -11,8 +13,18 @@ from fastapi import FastAPI
 load_dotenv()
 
 EXPRESS_URL = os.getenv("EXPRESS_URL", "http://localhost:8001")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 app = FastAPI()
+
+# cors
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[FRONTEND_URL],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class AnswerInput(BaseModel):
