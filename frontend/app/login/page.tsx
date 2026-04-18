@@ -1,42 +1,30 @@
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 
-export default function Page () {
-    return <div>
-        <Group>
-
-
-            This is login page
-            
-            <InputField/>
-            <InputField/>
-
-
-            <Button/>
-            </Group>
+export default function Page() {
+  return (
+    <div>
+      <Group>
+        This is login page
+        <InputField />
+        <InputField />
+        <Button />
+      </Group>
     </div>
+  );
 }
-
-
 
 interface GroupProps {
-    children: ReactNode
+  children: ReactNode;
 }
 
-function Group (props: GroupProps) {
-    return <div className="flex flex-col gap-2"> 
-        {props.children}
-    </div>
+function Group(props: GroupProps) {
+  return <div className="flex flex-col gap-2">{props.children}</div>;
 }
 
-
-function InputField () {
-    return <input className="w-fit border-2" placeholder="input field">
-
-    </input>
+function InputField() {
+  return <input className="w-fit border-2" placeholder="input field"></input>;
 }
 
-function Button () {
-    return <button className=" w-fit p-2 border rounded-xl">
-        Login
-    </button>
+function Button() {
+  return <button className=" w-fit p-2 border rounded-xl">Login</button>;
 }
