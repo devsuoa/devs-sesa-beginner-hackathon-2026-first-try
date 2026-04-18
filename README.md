@@ -13,8 +13,11 @@ uv sync
 
 Copy the example environment variables.
 
+Make sure to add `OPENAPI_API_KEY` to `express/.env`.
+
 ```bash
 cp frontend/.env.example frontend/.env
+cp express/.env.example express/.env
 cp fastapi/.env.example fastapi/.env
 ```
 
