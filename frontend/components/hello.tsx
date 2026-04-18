@@ -19,9 +19,9 @@ export function Hello() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <div>
       <p>{fastApiHello.data?.message ?? "Loading FastAPI..."}</p>
       <p>{expressHello.data?.message ?? "Loading Express..."}</p>
-    </main>
+    </div>
   );
 }
