@@ -66,6 +66,8 @@ interface GameSessionState extends GameSession {
   updateTicketStatus: (ticketId: string, status: TicketStatus) => void;
   incrementStrikes: (amount?: number) => void;
   tick: (now?: number) => void;
+  selectedTicketId: string | null;
+  setSelectedTicketId: (id: string) => void;
 }
 
 function getNextTicketIntervalSeconds(currentIntervalSeconds: number) {
@@ -214,4 +216,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       }));
     });
   },
+
+  selectedTicketId: null as string | null,
+  setSelectedTicketId: (id: string) => set({ selectedTicketId: id }),
 }));
