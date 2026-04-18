@@ -41,7 +41,7 @@ export function TicketAnswerForm({
           e.preventDefault();
           form.handleSubmit();
         }}
-        className="flex gap-2"
+        className="flex gap-2 w-full"
       >
         <form.AppField name="answer">
           {(field) => <field.TextField placeholder="Your message…" />}
