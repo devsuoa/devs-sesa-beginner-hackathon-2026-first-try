@@ -42,6 +42,7 @@ const ALIEN_TYPES = [
 const initialGameSession: GameSession = {
   tickets: [],
   strikes: 0,
+  resolved: 0,
   isActive: false,
   ticketIntervalSeconds: INITIAL_TICKET_INTERVAL_SECONDS,
   lastTicketCreatedAt: null,
@@ -129,6 +130,7 @@ export const useGameSessionStore = create<GameSessionState>((set) => ({
       return {
         tickets: [createGeneratedTicket(0, startedAt, false)],
         strikes: initialGameSession.strikes,
+        resolved: initialGameSession.resolved,
         isActive: true,
         ticketIntervalSeconds: initialGameSession.ticketIntervalSeconds,
         lastTicketCreatedAt: startedAt,
@@ -144,11 +146,29 @@ export const useGameSessionStore = create<GameSessionState>((set) => ({
       tickets: state.tickets.filter((ticket) => ticket.id !== ticketId),
     })),
   updateTicketStatus: (ticketId, status) =>
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket.id === ticketId ? { ...ticket, status } : ticket,
-      ),
-    })),
+    set((state) => {
+      const ticket = state.tickets.find(
+        (candidate) => candidate.id === ticketId,
+      );
+
+      if (!ticket) {
+        return state;
+      }
+
+      if (status === "pending") {
+        return {
+          tickets: state.tickets.map((candidate) =>
+            candidate.id === ticketId ? { ...candidate, status } : candidate,
+          ),
+        };
+      }
+
+      return {
+        tickets: state.tickets.filter((candidate) => candidate.id !== ticketId),
+        strikes: state.strikes + (status === "strike" ? 1 : 0),
+        resolved: state.resolved + (status === "success" ? 1 : 0),
+      };
+    }),
   incrementStrikes: (amount = 1) =>
     set((state) => ({
       strikes: state.strikes + amount,
@@ -169,10 +189,8 @@ export const useGameSessionStore = create<GameSessionState>((set) => ({
       }
 
       const nextTicketBankId = state.tickets.length;
-      const tickets = state.tickets.map((ticket) =>
-        expiredTicketIds.includes(ticket.id)
-          ? { ...ticket, status: "strike" as const }
-          : ticket,
+      const tickets = state.tickets.filter(
+        (ticket) => !expiredTicketIds.includes(ticket.id),
       );
 
       if (!shouldCreateTicket) {

@@ -17,6 +17,7 @@ export interface Ticket {
 export interface GameSession {
   tickets: Ticket[];
   strikes: number;
+  resolved: number;
   isActive: boolean;
   ticketIntervalSeconds: number;
   lastTicketCreatedAt: number | null;

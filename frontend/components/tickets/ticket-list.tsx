@@ -8,11 +8,10 @@ import type { Ticket } from "@/lib/game-session/types";
 
 export function TicketList() {
   const tickets = useGameSessionStore((state) => state.tickets);
-  const visibleTickets = tickets.filter((ticket) => ticket.status !== "strike");
 
   return (
     <ul className="space-y-2">
-      {visibleTickets.map((ticket) => (
+      {tickets.map((ticket) => (
         <TicketItem key={ticket.id} ticket={ticket} />
       ))}
     </ul>
