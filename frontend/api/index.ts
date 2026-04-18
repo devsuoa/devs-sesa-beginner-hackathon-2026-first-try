@@ -1,14 +1,34 @@
-import { express } from "./express";
-import { fastapi } from "./fastapi";
+import { env } from "@/lib/env";
+import ky from "ky";
 
-export interface Api {
-  express: typeof express;
-  fastapi: typeof fastapi;
+export interface GetQuestionResponse {
+  id: number;
+  question: string;
 }
 
-const api: Api = {
-  express,
-  fastapi,
+export interface CheckAnswerValues {
+  id: number;
+  answer: string;
+}
+
+export interface CheckAnswerResponse {
+  result: boolean;
+}
+
+export async function getQuestion() {
+  return await ky.get(`${env.NEXT_PUBLIC_FASTAPI_URL}/getQuestion`).json<GetQuestionResponse>();
+}
+
+export async function checkAnswer(values: CheckAnswerValues) {
+  return await ky.post(`${env.NEXT_PUBLIC_FASTAPI_URL}/checkAnswer`, {
+    json: values,
+  }).json<CheckAnswerResponse>();
+}
+
+export const api = {
+  getQuestion,
+  checkAnswer
 };
 
-export default api;
+
+export type Api = typeof api;
