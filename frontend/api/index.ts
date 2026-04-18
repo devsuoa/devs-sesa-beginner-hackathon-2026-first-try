@@ -16,19 +16,22 @@ export interface CheckAnswerResponse {
 }
 
 export async function getQuestion() {
-  return await ky.get(`${env.NEXT_PUBLIC_FASTAPI_URL}/getQuestion`).json<GetQuestionResponse>();
+  return await ky
+    .get(`${env.NEXT_PUBLIC_FASTAPI_URL}/getQuestion`)
+    .json<GetQuestionResponse>();
 }
 
 export async function checkAnswer(values: CheckAnswerValues) {
-  return await ky.post(`${env.NEXT_PUBLIC_FASTAPI_URL}/checkAnswer`, {
-    json: values,
-  }).json<CheckAnswerResponse>();
+  return await ky
+    .post(`${env.NEXT_PUBLIC_FASTAPI_URL}/checkAnswer`, {
+      json: values,
+    })
+    .json<CheckAnswerResponse>();
 }
 
 export const api = {
   getQuestion,
-  checkAnswer
+  checkAnswer,
 };
-
 
 export type Api = typeof api;
