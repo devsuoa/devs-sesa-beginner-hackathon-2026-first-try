@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Urbanist } from "next/font/google";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { GameSessionProvider } from "@/components/providers/game-session";
@@ -7,14 +7,10 @@ import { QueryProvider } from "@/components/providers/query";
 import { useGameSessionStore } from "@/lib/game-session/store";
 import "./globals.css";
 
-const fontSans = Geist({
-  variable: "--font-sans",
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
   subsets: ["latin"],
-});
-
-const fontMono = Geist_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -30,8 +26,8 @@ export default function RootLayout({
   return (
     <html 
     lang="en" 
-    className={`${fontSans.variable} ${fontMono.variable}`}>
-    <body className="min-h-screen bg-slate-950 text-white">
+    className={urbanist.variable}>
+    <body className="min-h-screen" style={{ backgroundColor: "#00033D", color: "#F2E6EE" }}>
         <QueryProvider>
           <GameSessionProvider>
             <div className="min-h-screen flex flex-col">

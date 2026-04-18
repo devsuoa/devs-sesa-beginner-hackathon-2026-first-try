@@ -7,8 +7,8 @@ export function Topbar() {
   const resolved = useGameSessionStore((s) => s.resolved);
 
   return (
-    <header className="h-14 flex items-center justify-between px-6">
-      <div className="font-bold text-sm uppercase tracking-wide">
+    <header className="h-14 flex items-center justify-between px-6 bg-[#00033D] text-[#F2E6EE]">
+      <div className="text-[64px] font-bold">
         space.
       </div>
 

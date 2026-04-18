@@ -12,7 +12,7 @@ export default function Home() {
   );
   const tickets = useGameSessionStore((state) => state.tickets);
 
-  const selectedTicket = selectedTicketId 
+  const selectedTicket = selectedTicketId
     ? tickets.find((t) => t.id === selectedTicketId)
     : null;
 
@@ -21,72 +21,75 @@ export default function Home() {
   const isTicketSelected = !!selectedTicket;
 
   return (
-    <div className="flex flex-1 p-6 gap-6">      
+    <div className="flex flex-1 p-6 gap-6 text-[#F2E6EE]">
+
       {/* LEFT PANEL */}
       <section className="flex-1 flex flex-col">
         <header className="mb-4 flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold">Intergalactic Space Agency</h3>
-            <h1 className="text-lg font-semibold">Ticket System</h1>
+            <h3 className="text-[36px] font-medium">Intergalactic Space Agency</h3>
+            <h1 className="text-[74px] font-bold leading-none">Ticket System</h1>
           </div>
-
         </header>
 
-        <div className="flex-1 rounded-lg border p-4">
+        <div className="flex-1 rounded-[90px] bg-[#191C5B] p-8 shadow-inner">
+
           {/* DEFAULT VIEW */}
           {!isTicketSelected && (
-            <div className="space-y-3">
-              <h2 className="font-semibold text-base">On-Shift Tasks</h2>
-              <p className="text-sm">
-                Welcome to the Intergalactic Space Agency Helpdesk. You will be
-                responsible for assisting our most esteemed customers with all their
-                intergalactic needs.
+            <div className="space-y-6">
+              <h2 className="text-[53px] font-bold">On-Shift Tasks</h2>
+
+              <p className="text-[26px] font-bold">
+                Welcome to the Intergalactic Space Agency Helpdesk.
               </p>
 
-              <div className="space-y-1 text-sm">
-                <p className="font-semibold">Guidelines:</p>
+              <p className="text-[26px] font-normal">
+                You will be responsible for assisting our most esteemed customers with all their intergalactic needs.
+              </p>
+
+              <div className="space-y-2">
+                <p className="text-[26px] font-bold">Guidelines:</p>
                 <ul className="list-disc list-inside space-y-1">
-                  <li>Carefully read ticket enquiries.</li>
-                  <li>Respond correctly, promptly, and respectfully.</li>
-                  <li>Refer to your manual when necessary – no mistakes tolerated.</li>
+                  <li className="text-[26px] font-normal">Carefully read ticket enquiries.</li>
+                  <li className="text-[26px] font-normal">Respond correctly, promptly, and respectfully.</li>
+                  <li className="text-[26px] font-normal">Refer to your manual when necessary – no mistakes tolerated.</li>
                 </ul>
               </div>
 
-              <p className="text-sm">You may clock out upon meeting our response quota.</p>
+              <p className="text-[26px] font-normal">You may clock out upon meeting our response quota.</p>
+              <p className="text-[26px] font-bold italic">Do your best, and don't forget... we are always watching you!.</p>
             </div>
           )}
 
           {/* TICKET SELECTED VIEW */}
           {isTicketSelected && selectedTicket && (
-            <div className="space-y-4 relative">
+            <div className="space-y-6 relative">
 
-              {/* TIMER*/}
-              <span className="absolute top-0 right-0 text-sm font-semibold">
+              {/* TIMER */}
+              <span className="absolute top-0 right-0 bg-[#191C5B]/70 rounded-[19px] px-4 py-1 shadow-[0_0_25px_rgba(0,0,0,0.45)] text-[26px] font-bold">
                 {selectedTicket.timeLimitSeconds ?? "00:00"}
               </span>
 
-              {/* PROFILE PICTURE PLACEHOLDER */}
-              <div className="w-24 h-24 rounded-full bg-neutral-700 mx-auto" />
+              {/* PROFILE PICTURE */}
+              <div className="w-24 h-24 rounded-full bg-neutral-700 mx-auto shadow-[0_0_25px_rgba(0,0,0,0.45)]" />
 
               {/* BASIC INFO */}
-              <div className="space-y-1 text-sm">
-                <p>
-                  <span className="font-semibold">Ticket ID:</span> {selectedTicket.id}
+              <div className="space-y-2">
+                <p className="text-[28px] font-normal">
+                  <span className="font-bold">Ticket ID:</span> {selectedTicket.id}
                 </p>
-                <p>
-                  <span className="font-semibold">Name:</span>{" "}
-                  {selectedTicket.alien?.name ?? "Unknown"}
+                <p className="text-[28px] font-normal">
+                  <span className="font-bold">Name:</span> {selectedTicket.alien?.name ?? "Unknown"}
                 </p>
-                <p>
-                  <span className="font-semibold">Alien Type:</span>{" "}
-                  {selectedTicket.alien?.type ?? "Unknown"}
+                <p className="text-[28px] font-normal">
+                  <span className="font-bold">Alien Type:</span> {selectedTicket.alien?.type ?? "Unknown"}
                 </p>
               </div>
 
               {/* PROBLEM DESCRIPTION */}
-              <div className="space-y-1 text-sm">
-                <p className="font-semibold">Ticket Content</p>
-                <p>{selectedTicket.question.text}</p>
+              <div className="space-y-2">
+                <p className="text-[28px] font-bold">Ticket Content</p>
+                <p className="text-[28px] font-bold">{selectedTicket.question.text}</p>
               </div>
             </div>
           )}
@@ -95,92 +98,122 @@ export default function Home() {
 
       {/* RIGHT PANEL */}
       <section className="flex-1 flex flex-col">
+
         {/* NAVIGATION */}
-        <header className="mb-4 flex items-center justify-between">
-          <nav className="flex gap-2">
+        <header className="mb-4 flex items-center justify-between relative z-10">
+          <nav className="flex gap-4">
             <button
-              type="button"
-              onClick={() => setMode("response")}
-            >
-              Response
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("manual")}
-            >
-              Manual
-            </button>
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setMode("response");
+            }}
+            className="
+              text-[28px] font-medium 
+              px-10 py-3 
+              rounded-[25px] 
+              text-white
+              bg-gradient-to-br from-[#0600AB] to-[#977DFF]
+              shadow-[0_0_25px_rgba(0,0,0,0.45)]
+            "
+          >
+            Response
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setMode("manual");
+            }}
+            className="
+              text-[28px] font-medium 
+              px-10 py-3 
+              rounded-[25px] 
+              text-white
+              bg-gradient-to-br from-[#0600AB] to-[#977DFF]
+              shadow-[0_0_25px_rgba(0,0,0,0.45)]
+            "
+          >
+            Manual
+          </button>
           </nav>
         </header>
 
-        {/* CONTENT */}
-        <div className="flex-1 flex flex-col gap-4">
-          {/* DEFAULT VIEW: NO TICKET SELECTED */}
-          {!isTicketSelected && (
-            <>
-              {/* STATUS TITLE */}
-              <h2 className="text-sm font-semibold">Ticket Status</h2>
+          {/* CONTENT */}
+          <div className="flex-1 flex flex-col gap-6 relative z-0">
 
-              {/* STATUS BOX */}
-              <div className="rounded-lg border p-4 mb-4">
-                <p className="text-sm">No ticket selected.</p>
-              </div>
+            {/* DEFAULT VIEW */}
+              {!isTicketSelected && (
+              <>
+                <h2 className="text-[32px] font-bold">Ticket Status</h2>
 
-              {/* RESPOND TITLE */}
-              <h2 className="text-sm font-semibold">Respond To Ticket</h2>
+                <div className="rounded-[90px] bg-[#191C5B] p-6 shadow-inner">
+                  <p className="text-[26px] font-normal">No ticket selected.</p>
+                </div>
 
-              {/* RESPOND BOX */}
-              <div className="flex-1 rounded-lg border p-4">
-                <p className="text-sm">Select a ticket from the sidebar to begin.</p>
-              </div>
-            </>
-          )}
-          
-          {/* TICKET SELECTED + MANUAL MODE */}
+                <h2 className="text-[32px] font-bold">Respond To Ticket</h2>
+
+                <div className="flex-1 rounded-[90px] bg-[#191C5B] p-6 shadow-inner">
+                  <p className="text-[26px] font-normal">Select a ticket from the sidebar to begin.</p>
+                </div>
+              </>
+            )}
+
+          {/* MANUAL MODE */}
           {isTicketSelected && mode === "manual" && (
             <>
-              {/* MANUAL TITLE */}
-              <h2 className="text-sm font-semibold mb-1">Manual</h2>
+              <h2 className="text-[32px] font-bold mb-1">Manual</h2>
 
-              {/* MANUAL BOX */}
-              <div className="flex-1 rounded-lg border p-4">
-                <p className="text-sm">
-                  {/* TODO: Add manual text here */}
+              <div className="flex-1 rounded-[90px] bg-[#191C5B] p-6 shadow-inner">
+                <p className="text-[26px] font-normal">
+                  {/* TODO: Add manual text */}
                 </p>
               </div>
             </>
           )}
 
-          {/* TICKET SELECTED + RESPONSE MODE */}
+          {/* RESPONSE MODE */}
           {isTicketSelected && mode === "response" && selectedTicket && (
             <>
-              {/* STATUS TITLE */}
-              <h2 className="text-sm font-semibold">Ticket Status</h2>
+              <h2 className="text-[32px] font-bold">Ticket Status</h2>
 
-              {/* STATUS BOX */}
-              <div className="rounded-lg border p-4">
-                <p className="text-sm">
-                  {isTicketSelected ? "Awaiting ticket response" : "No ticket selected."}
+              <div className="rounded-[90px] bg-[#191C5B] p-6 shadow-inner">
+                <p className="text-[28px] font-normal">
+                  Awaiting ticket response
                 </p>
               </div>
 
-             {/* RESPOND TITLE */}
-            <h2 className="text-sm font-semibold">Respond To Ticket</h2>
+              <h2 className="text-[32px] font-bold">Respond To Ticket</h2>
 
-            {/* RESPONSE BOX */}
-            <div className="flex-1 rounded-lg border p-4 flex flex-col">
-              {/* TODO: Implement ticket recieved message.  */}
-              <div className="flex-1 mb-4 overflow-y-auto">
-                {isTicketSelected ? "Ticket conversation placeholder" : "Select a ticket to begin."}
-              </div>
+              <div className="flex-1 rounded-[90px] bg-[#191C5B] p-6 flex flex-col shadow-inner">
 
-               {/* TODO: Show response as message once sent.*/}
-              <div className="mt-auto pt-2 border-t">
-                <TicketAnswerForm
-                  ticketId={selectedTicket.id}
-                  questionId={selectedTicket.question.id}
-                  />
-              </div>
+                {/* CHAT AREA */}
+                <div className="flex-1 overflow-y-auto scrollbar-none flex flex-col gap-6">
+
+                  {/* PURPLE BUBBLE */}
+                  <div className="max-w-[75%] bg-[#6A4DF4] text-white rounded-[25px] px-6 py-3 shadow-[0_0_25px_rgba(0,0,0,0.45)]">
+                    Ticket Received
+                  </div>
+
+                  {/* WHITE BUBBLE */}
+                  <div className="max-w-[75%] bg-white text-black rounded-[25px] px-6 py-3 shadow-[0_0_25px_rgba(0,0,0,0.45)] ml-auto">
+                    Sent response message appears here.
+                  </div>
+                </div>
+
+                {/* INPUT FIELD */}
+                <div className="mt-4 pt-4 border-t border-white/20">
+                  <div className="bg-white text-[#00033D] rounded-[25px] px-4 py-3 shadow-[0_0_25px_rgba(0,0,0,0.45)]">
+                    <TicketAnswerForm
+                      ticketId={selectedTicket.id}
+                      questionId={selectedTicket.question.id}
+                    />
+                  </div>
+                </div>
+
               </div>
             </>
           )}
