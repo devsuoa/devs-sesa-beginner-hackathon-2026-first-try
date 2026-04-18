@@ -9,21 +9,25 @@ import type { Ticket } from "@/lib/game-session/types";
 export function TicketList() {
   const tickets = useGameSessionStore((state) => state.tickets);
 
+  const setSelectedTicketId = useGameSessionStore(
+    (state) => state.setSelectedTicketId
+  );
+
   return (
     <ul className="space-y-2">
       {tickets.map((ticket) => (
-        <TicketItem key={ticket.id} ticket={ticket} />
+        <TicketItem key={ticket.id} ticket={ticket} setSelectedTicketId={setSelectedTicketId} />
       ))}
     </ul>
   );
 }
 
-function TicketItem({ ticket }: { ticket: Ticket }) {
+function TicketItem({ ticket, setSelectedTicketId, }: { ticket: Ticket; setSelectedTicketId: (id: string) => void; }) {
   return (
     <li>
-      <Link
-        href={`/${ticket.id}`}
-        className="flex items-center justify-between gap-2 rounded border border-neutral-300 px-3 py-2.5"
+      <button
+        onClick={() => { console.log("clicked ticket:", ticket.id); setSelectedTicketId(ticket.id);}}
+        className="flex items-center justify-between gap-2 rounded border border-neutral-300 px-3 py-2.5 w-full cursor-pointer"
       >
         <div className="flex items-center gap-2">
           {ticket.question.critical && (
@@ -38,7 +42,7 @@ function TicketItem({ ticket }: { ticket: Ticket }) {
           createdAt={ticket.createdAt}
           timeLimitSeconds={ticket.timeLimitSeconds}
         />
-      </Link>
+      </button>
     </li>
   );
 }
