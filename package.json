@@ -2,6 +2,7 @@
   "name": "hackathon-template",
   "version": "0.1.0",
   "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
     "turbo": "^2.5.8"
   },
   "packageManager": "bun@1.3.12",
@@ -13,8 +14,13 @@
     "dev:fastapi": "turbo run dev --filter=fastapi",
     "build": "turbo run build",
     "start": "turbo run start",
+    "lint:frontend": "biome check frontend",
+    "lint:express": "biome check express",
     "lint": "turbo run lint",
-    "format": "turbo run format"
+    "format:frontend": "biome format --write frontend",
+    "format:express": "biome format --write express",
+    "format": "turbo run format",
+    "ci:biome": "biome ci ."
   },
   "workspaces": [
     "frontend",
