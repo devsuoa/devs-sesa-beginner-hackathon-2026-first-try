@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { Sidebar } from "@/components/layout/sidebar";
+import { GameSessionProvider } from "@/components/providers/game-session";
 import { QueryProvider } from "@/components/providers/query";
+import "./globals.css";
 
 const fontSans = Geist({
   variable: "--font-sans",
@@ -24,13 +26,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <QueryProvider>
-      <html
-        lang="en"
-        className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
-      >
-        <body>{children}</body>
-      </html>
-    </QueryProvider>
+    <html
+      lang="en"
+      className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
+    >
+      <body>
+        <QueryProvider>
+          <GameSessionProvider>
+            <div className="flex min-h-screen">
+              <Sidebar />
+              <main className="min-w-0 flex-1">{children}</main>
+            </div>
+          </GameSessionProvider>
+        </QueryProvider>
+      </body>
+    </html>
   );
 }
