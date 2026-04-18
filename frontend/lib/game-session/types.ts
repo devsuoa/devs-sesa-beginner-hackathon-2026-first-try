@@ -1,4 +1,5 @@
 export type TicketStatus = "pending" | "success" | "strike";
+export type GameSessionStatus = "pending" | "win" | "loss";
 
 export interface Alien {
   name: string;
@@ -24,6 +25,7 @@ export interface GameSession {
   tickets: Ticket[];
   strikes: number;
   resolved: number;
+  status: GameSessionStatus;
   isActive: boolean;
   ticketIntervalSeconds: number;
   lastTicketCreatedAt: number | null;

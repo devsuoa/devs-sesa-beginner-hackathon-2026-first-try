@@ -9,11 +9,15 @@ import type {
   TicketStatus,
 } from "@/lib/game-session/types";
 
-const INITIAL_TICKET_INTERVAL_SECONDS = 30;
-const TICKET_INTERVAL_DECREASE_SECONDS = 2;
-const MINIMUM_TICKET_INTERVAL_SECONDS = 10;
-const NORMAL_TICKET_TIME_LIMIT_SECONDS = 90;
-const CRITICAL_TICKET_TIME_LIMIT_SECONDS = 30;
+export const config = {
+  INITIAL_TICKET_INTERVAL_SECONDS: 20,
+  TICKET_INTERVAL_DECREASE_SECONDS: 2,
+  MINIMUM_TICKET_INTERVAL_SECONDS: 10,
+  NORMAL_TICKET_TIME_LIMIT_SECONDS: 120,
+  CRITICAL_TICKET_TIME_LIMIT_SECONDS: 30,
+  QUOTA: 10,
+  MAX_STRIKES: 3,
+};
 
 const createTicketId = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -53,8 +57,9 @@ const initialGameSession: GameSession = {
   tickets: [],
   strikes: 0,
   resolved: 0,
+  status: "pending",
   isActive: false,
-  ticketIntervalSeconds: INITIAL_TICKET_INTERVAL_SECONDS,
+  ticketIntervalSeconds: config.INITIAL_TICKET_INTERVAL_SECONDS,
   lastTicketCreatedAt: null,
 };
 
@@ -70,8 +75,8 @@ interface GameSessionState extends GameSession {
 
 function getNextTicketIntervalSeconds(currentIntervalSeconds: number) {
   return Math.max(
-    MINIMUM_TICKET_INTERVAL_SECONDS,
-    currentIntervalSeconds - TICKET_INTERVAL_DECREASE_SECONDS,
+    config.MINIMUM_TICKET_INTERVAL_SECONDS,
+    currentIntervalSeconds - config.TICKET_INTERVAL_DECREASE_SECONDS,
   );
 }
 
@@ -100,11 +105,36 @@ function createGeneratedTicket(createdAt: number, question: Question): Ticket {
       type: ALIEN_TYPES[Math.floor(Math.random() * ALIEN_TYPES.length)],
     },
     timeLimitSeconds: question.critical
-      ? CRITICAL_TICKET_TIME_LIMIT_SECONDS
-      : NORMAL_TICKET_TIME_LIMIT_SECONDS,
+      ? config.CRITICAL_TICKET_TIME_LIMIT_SECONDS
+      : config.NORMAL_TICKET_TIME_LIMIT_SECONDS,
     createdAt,
     question,
   });
+}
+
+function endSession({
+  strikes,
+  resolved,
+}: Pick<GameSession, "strikes" | "resolved">) {
+  if (resolved >= config.QUOTA) {
+    window.alert("You win!");
+
+    return {
+      isActive: false,
+      status: "win" as const,
+    };
+  }
+
+  if (strikes >= config.MAX_STRIKES) {
+    window.alert("You lose!");
+
+    return {
+      isActive: false,
+      status: "loss" as const,
+    };
+  }
+
+  return null;
 }
 
 export const useGameSessionStore = create<GameSessionState>((set, get) => ({
@@ -121,6 +151,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       tickets: [createGeneratedTicket(startedAt, question)],
       strikes: initialGameSession.strikes,
       resolved: initialGameSession.resolved,
+      status: initialGameSession.status,
       isActive: true,
       ticketIntervalSeconds: initialGameSession.ticketIntervalSeconds,
       lastTicketCreatedAt: startedAt,
@@ -153,16 +184,28 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
         };
       }
 
-      return {
+      const nextState = {
         tickets: state.tickets.filter((candidate) => candidate.id !== ticketId),
         strikes: state.strikes + (status === "strike" ? 1 : 0),
         resolved: state.resolved + (status === "success" ? 1 : 0),
       };
+
+      const sessionEnd = endSession(nextState);
+
+      return sessionEnd ? { ...nextState, ...sessionEnd } : nextState;
     }),
   incrementStrikes: (amount = 1) =>
-    set((state) => ({
-      strikes: state.strikes + amount,
-    })),
+    set((state) => {
+      const nextState = {
+        strikes: state.strikes + amount,
+      };
+      const sessionEnd = endSession({
+        strikes: nextState.strikes,
+        resolved: state.resolved,
+      });
+
+      return sessionEnd ? { ...nextState, ...sessionEnd } : nextState;
+    }),
   tick: (now = Date.now()) => {
     const state = get();
 
@@ -182,12 +225,18 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       return;
     }
 
-    set({
+    const nextState = {
       tickets: remainingTickets,
       strikes: state.strikes + expiredCount,
+    };
+    const sessionEnd = endSession({
+      strikes: nextState.strikes,
+      resolved: state.resolved,
     });
 
-    if (!shouldCreateTicket) {
+    set(sessionEnd ? { ...nextState, ...sessionEnd } : nextState);
+
+    if (sessionEnd || !shouldCreateTicket) {
       return;
     }
 
