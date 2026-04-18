@@ -2,6 +2,11 @@
 
 Hackathon template with Express, FastAPI, and Next.js 💫
 
+## Prerequisites
+
+- [Bun](https://bun.sh) — JavaScript runtime and package manager
+- [uv](https://docs.astral.sh/uv/) — Python package manager
+
 ## Getting Started
 
 Install project dependencies.
