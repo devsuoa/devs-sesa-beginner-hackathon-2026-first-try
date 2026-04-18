@@ -39,6 +39,16 @@ def get_question():
 
     return {"id": id, "question": question}
 
+@app.get("/v2/getQuestion")
+def get_question():
+    # randint is inclusive (includes both end points)
+    id = randint(0, len(questions_answers) - 1)
+    question = questions_answers[id][0]
+
+    critical = questions_answers[id][2] # true or false
+
+    return {"id": id, "question": question, "critical": critical}
+
 
 @app.post("/checkAnswer")
 def check_answer(data: AnswerInput):
