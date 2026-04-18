@@ -1,9 +1,11 @@
 import { customAlphabet } from "nanoid";
 import { create } from "zustand";
+import { getQuestion } from "@/api";
 import type {
   Alien,
   CreateTicketInput,
   GameSession,
+  Question,
   Ticket,
   TicketStatus,
 } from "@/lib/game-session/types";
@@ -20,6 +22,22 @@ const createTicketId = customAlphabet(
 );
 
 const ALIEN_NAMES = [
+  "Zyx",
+  "Krell",
+  "Vex",
+  "Nyx",
+  "Quor",
+  "Thray",
+  "Vex",
+  "Solyx",
+  "Kryx",
+  "Nivex",
+  "Quarr",
+  "Zephyx",
+  "Theron",
+  "Myx",
+  "Vorin",
+  "Syl",
   "Zorg",
   "Vexa",
   "Blip",
@@ -31,12 +49,9 @@ const ALIEN_NAMES = [
 ];
 
 const ALIEN_TYPES = [
-  "martian",
-  "venusian",
-  "plutonian",
-  "andromedan",
-  "nebulite",
-  "cosmonid",
+  "Rulix",
+  "Grob",
+  "Kindor",
 ];
 
 const initialGameSession: GameSession = {
@@ -49,7 +64,7 @@ const initialGameSession: GameSession = {
 };
 
 interface GameSessionState extends GameSession {
-  startSession: () => void;
+  startSession: () => Promise<void>;
   resetSession: () => void;
   addTicket: (ticket: CreateTicketInput) => void;
   removeTicket: (ticketId: string) => void;
@@ -86,13 +101,14 @@ function createTicket(input: CreateTicketInput): Ticket {
     status: "pending",
     timeLimitSeconds: input.timeLimitSeconds,
     createdAt: input.createdAt ?? Date.now(),
+    question: input.question,
   };
 }
 
-function createGeneratedAlien(ticketBankId: number): Alien {
+function createGeneratedAlien(): Alien {
   return {
-    name: ALIEN_NAMES[ticketBankId % ALIEN_NAMES.length],
-    type: ALIEN_TYPES[ticketBankId % ALIEN_TYPES.length],
+    name: ALIEN_NAMES[Math.floor(Math.random() * ALIEN_NAMES.length)],
+    type: ALIEN_TYPES[Math.floor(Math.random() * ALIEN_TYPES.length)],
   };
 }
 
@@ -101,41 +117,47 @@ function getGeneratedTicketDifficulty() {
 }
 
 function createGeneratedTicket(
-  ticketBankId: number,
   createdAt: number,
+  question: Question,
   criticalOverride?: boolean,
 ): Ticket {
   const critical = criticalOverride ?? getGeneratedTicketDifficulty();
 
   return createTicket({
-    alien: createGeneratedAlien(ticketBankId),
+    alien: createGeneratedAlien(),
     critical,
     timeLimitSeconds: critical
       ? CRITICAL_TICKET_TIME_LIMIT_SECONDS
       : NORMAL_TICKET_TIME_LIMIT_SECONDS,
     createdAt,
+    question,
   });
 }
 
-export const useGameSessionStore = create<GameSessionState>((set) => ({
+async function fetchQuestion(): Promise<Question> {
+  const response = await getQuestion();
+  return { id: response.id, text: response.question };
+}
+
+export const useGameSessionStore = create<GameSessionState>((set, get) => ({
   ...initialGameSession,
-  startSession: () =>
-    set((state) => {
-      if (state.isActive) {
-        return state;
-      }
+  startSession: async () => {
+    if (get().isActive) {
+      return;
+    }
 
-      const startedAt = Date.now();
+    const startedAt = Date.now();
+    const question = await fetchQuestion();
 
-      return {
-        tickets: [createGeneratedTicket(0, startedAt, false)],
-        strikes: initialGameSession.strikes,
-        resolved: initialGameSession.resolved,
-        isActive: true,
-        ticketIntervalSeconds: initialGameSession.ticketIntervalSeconds,
-        lastTicketCreatedAt: startedAt,
-      };
-    }),
+    set({
+      tickets: [createGeneratedTicket(startedAt, question, false)],
+      strikes: initialGameSession.strikes,
+      resolved: initialGameSession.resolved,
+      isActive: true,
+      ticketIntervalSeconds: initialGameSession.ticketIntervalSeconds,
+      lastTicketCreatedAt: startedAt,
+    });
+  },
   resetSession: () => set(initialGameSession),
   addTicket: (ticket) =>
     set((state) => ({
@@ -173,41 +195,42 @@ export const useGameSessionStore = create<GameSessionState>((set) => ({
     set((state) => ({
       strikes: state.strikes + amount,
     })),
-  tick: (now = Date.now()) =>
-    set((state) => {
-      if (!state.isActive) {
-        return state;
-      }
+  tick: (now = Date.now()) => {
+    const state = get();
 
-      const expiredTicketIds = getExpiredTicketIds(state.tickets, now);
-      const lastTicketCreatedAt = state.lastTicketCreatedAt ?? now;
-      const shouldCreateTicket =
-        now - lastTicketCreatedAt >= state.ticketIntervalSeconds * 1000;
+    if (!state.isActive) {
+      return;
+    }
 
-      if (expiredTicketIds.length === 0 && !shouldCreateTicket) {
-        return state;
-      }
+    const expiredTicketIds = getExpiredTicketIds(state.tickets, now);
+    const lastTicketCreatedAt = state.lastTicketCreatedAt ?? now;
+    const shouldCreateTicket =
+      now - lastTicketCreatedAt >= state.ticketIntervalSeconds * 1000;
 
-      const nextTicketBankId = state.tickets.length;
-      const expiredTicketIdSet = new Set(expiredTicketIds);
-      const tickets = state.tickets.filter(
-        (ticket) => !expiredTicketIdSet.has(ticket.id),
-      );
+    if (expiredTicketIds.length === 0 && !shouldCreateTicket) {
+      return;
+    }
 
-      if (!shouldCreateTicket) {
-        return {
-          tickets,
-          strikes: state.strikes + expiredTicketIds.length,
-        };
-      }
+    const expiredTicketIdSet = new Set(expiredTicketIds);
+    const tickets = state.tickets.filter(
+      (ticket) => !expiredTicketIdSet.has(ticket.id),
+    );
 
-      return {
-        tickets: [...tickets, createGeneratedTicket(nextTicketBankId, now)],
-        strikes: state.strikes + expiredTicketIds.length,
+    set({
+      tickets,
+      strikes: state.strikes + expiredTicketIds.length,
+    });
+
+    if (!shouldCreateTicket) {
+      return;
+    }
+
+    fetchQuestion().then((question) => {
+      set((s) => ({
+        tickets: [...s.tickets, createGeneratedTicket(now, question)],
         lastTicketCreatedAt: now,
-        ticketIntervalSeconds: getNextTicketIntervalSeconds(
-          state.ticketIntervalSeconds,
-        ),
-      };
-    }),
+        ticketIntervalSeconds: getNextTicketIntervalSeconds(s.ticketIntervalSeconds),
+      }));
+    });
+  },
 }));
