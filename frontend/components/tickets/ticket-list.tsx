@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
-import Link from "next/link";
 import { TicketTimer } from "@/components/tickets/ticket-timer";
 import { useGameSessionStore } from "@/lib/game-session/store";
 import type { Ticket } from "@/lib/game-session/types";
@@ -26,7 +25,7 @@ function TicketItem({ ticket, setSelectedTicketId, }: { ticket: Ticket; setSelec
   return (
     <li>
       <button
-        onClick={() => { console.log("clicked ticket:", ticket.id); setSelectedTicketId(ticket.id);}}
+        onClick={() => setSelectedTicketId(ticket.id)}
         className="flex items-center justify-between gap-2 rounded border border-neutral-300 px-3 py-2.5 w-full cursor-pointer"
       >
         <div className="flex items-center gap-2">
