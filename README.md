@@ -11,10 +11,11 @@ bun install
 uv sync
 ```
 
-Copy the frontend example environment variables.
+Copy the example environment variables.
 
 ```bash
 cp frontend/.env.example frontend/.env
+cp fastapi/.env.example fastapi/.env
 ```
 
 Start the development servers.
