@@ -1,6 +1,13 @@
-# Hackathon Template
+# Intergalactic Space Agency Helpdesk
 
-Hackathon template with Express, FastAPI, and Next.js 💫
+You are a human working at the Intergalactic Space Agency, pretending to be an alien at the helpdesk. Answer all tickets within their given time limits to reach the day's quota and clock out.
+
+This project is built using Express, FastAPI, and Next.js 💫
+
+## Prerequisites
+
+- [Bun](https://bun.sh) — JavaScript runtime and package manager
+- [uv](https://docs.astral.sh/uv/) — Python package manager
 
 ## Getting Started
 
