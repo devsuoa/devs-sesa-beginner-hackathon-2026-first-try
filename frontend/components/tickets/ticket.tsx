@@ -1,12 +1,12 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { LoaderCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { checkAnswer } from "@/api";
 import { useGameSessionStore } from "@/lib/game-session/store";
 import { useTicketTimeRemaining } from "@/lib/game-session/use-ticket-time-remaining";
-import { LoaderCircleIcon } from "lucide-react";
 
 interface TicketDetailsProps {
   ticketId: string;
@@ -88,7 +88,11 @@ export function Ticket({ ticketId }: TicketDetailsProps) {
           disabled={form.state.isSubmitting || !form.state.values.answer.trim()}
           className="border border-neutral-300 px-3 py-1 rounded text-sm disabled:opacity-50"
         >
-          {form.state.isSubmitting ? <LoaderCircleIcon className="size-4 animate-spin" /> : "Send"}
+          {form.state.isSubmitting ? (
+            <LoaderCircleIcon className="size-4 animate-spin" />
+          ) : (
+            "Send"
+          )}
         </button>
       </form>
     </main>

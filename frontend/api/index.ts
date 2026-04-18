@@ -1,5 +1,5 @@
-import { env } from "@/lib/env";
 import ky from "ky";
+import { env } from "@/lib/env";
 
 export interface GetQuestionResponse {
   id: number;
