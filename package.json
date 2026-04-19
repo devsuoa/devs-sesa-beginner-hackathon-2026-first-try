@@ -17,6 +17,7 @@
     "lint:frontend": "biome check frontend",
     "lint:express": "biome check express",
     "lint": "turbo run lint",
+    "lint:fix": "biome check --fix",
     "format:frontend": "biome format --write frontend",
     "format:express": "biome format --write express",
     "format": "turbo run format",

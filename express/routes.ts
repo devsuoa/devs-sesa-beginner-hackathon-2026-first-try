@@ -1,12 +1,10 @@
 import OpenAI from "openai";
 import SYSTEM_PROMPT from "./prompt";
 
-
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENAI_API_KEY,
 });
-
 
 export async function checkEquivalence(answer: string, modelAnswer: string) {
   const response = await client.chat.completions.create({

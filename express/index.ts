@@ -1,8 +1,7 @@
 import "dotenv/config";
-import SYSTEM_PROMPT from "./prompt";
-import { checkEquivalence } from "./routes";
 
 import express, { type Request, type Response } from "express";
+import { checkEquivalence } from "./routes";
 
 const app = express();
 const port = Number(process.env.PORT) || 8001;
@@ -20,12 +19,10 @@ app.post("/", async (req: Request, res: Response) => {
   try {
     const result = await checkEquivalence(answer, modelAnswer);
     res.send(result);
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to check answer" });
   }
-
 });
 
 app.listen(port, () => {
