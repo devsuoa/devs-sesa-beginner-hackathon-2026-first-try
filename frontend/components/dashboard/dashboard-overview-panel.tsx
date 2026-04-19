@@ -18,7 +18,7 @@ export function DashboardOverviewPanel({
             Intergalactic Space Agency
           </h3>
           <h1 className="text-[clamp(2rem,5vw,3.75rem)] font-bold leading-none tracking-tight">
-            Ticket System
+            Helpdesk
           </h1>
         </div>
       </header>

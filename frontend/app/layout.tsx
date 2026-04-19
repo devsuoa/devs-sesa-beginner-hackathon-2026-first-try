@@ -14,8 +14,8 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
-  title: "Alien Helpdesk",
-  description: "Intergalactic Spage Agency ticket system",
+  title: "Helpdesk",
+  description: "Intergalactic Space Agency Helpdesk",
 };
 
 export default function RootLayout({
