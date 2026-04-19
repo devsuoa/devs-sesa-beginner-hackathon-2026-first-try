@@ -4,6 +4,7 @@ import { z } from "zod";
 import { checkAnswer } from "@/api";
 import { useAppForm } from "@/lib/form";
 import { useGameSessionStore } from "@/lib/game-session/store";
+import { TICKET_STATUS } from "@/lib/game-session/types";
 
 const answerSchema = z.object({
   answer: z.string().min(1),
@@ -30,7 +31,11 @@ export function TicketAnswerForm({
         id: questionId,
         answer: value.answer,
       });
-      updateTicketStatus(ticketId, result ? "success" : "strike");
+      updateTicketStatus(
+        ticketId,
+        result ? TICKET_STATUS.CLOSED : TICKET_STATUS.STRIKED,
+        value.answer,
+      );
     },
   });
 
@@ -41,7 +46,7 @@ export function TicketAnswerForm({
           e.preventDefault();
           form.handleSubmit();
         }}
-        className="flex gap-2 w-full"
+        className="flex w-full gap-4"
       >
         <form.AppField name="answer">
           {(field) => <field.TextField placeholder="Your message…" />}

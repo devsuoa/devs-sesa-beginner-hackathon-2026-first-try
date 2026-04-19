@@ -1,4 +1,10 @@
-export type TicketStatus = "pending" | "success" | "strike";
+export const TICKET_STATUS = {
+  AWAITING_RESPONSE: "Awaiting Ticket Response",
+  CLOSED: "Ticket Closed",
+  STRIKED: "Ticket Striked",
+} as const;
+
+export type TicketStatus = (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
 export type GameSessionStatus = "pending" | "win" | "loss";
 
 export interface Alien {
@@ -16,6 +22,7 @@ export interface Ticket {
   id: string;
   alien: Alien;
   status: TicketStatus;
+  responseText: string | null;
   timeLimitSeconds: number;
   createdAt: number;
   question: Question;

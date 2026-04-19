@@ -1,47 +1,62 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
-import { TicketTimer } from "@/components/tickets/ticket-timer";
+import Link from "next/link";
+import { AlienAvatar } from "@/components/dashboard/alien-avatar";
 import { useGameSessionStore } from "@/lib/game-session/store";
-import type { Ticket } from "@/lib/game-session/types";
+import { TICKET_STATUS, type Ticket } from "@/lib/game-session/types";
+import { useTicketTimeRemaining } from "@/lib/game-session/use-ticket-time-remaining";
 
 export function TicketList() {
   const tickets = useGameSessionStore((state) => state.tickets);
-
-  const setSelectedTicketId = useGameSessionStore(
-    (state) => state.setSelectedTicketId
+  const activeTickets = tickets.filter(
+    (ticket) => ticket.status === TICKET_STATUS.AWAITING_RESPONSE,
   );
 
   return (
-    <ul className="space-y-2">
-      {tickets.map((ticket) => (
-        <TicketItem key={ticket.id} ticket={ticket} setSelectedTicketId={setSelectedTicketId} />
+    <ul className="m-0 flex w-full list-none flex-col items-center gap-3 p-0">
+      {activeTickets.map((ticket) => (
+        <TicketItem key={ticket.id} ticket={ticket} />
       ))}
     </ul>
   );
 }
 
-function TicketItem({ ticket, setSelectedTicketId, }: { ticket: Ticket; setSelectedTicketId: (id: string) => void; }) {
+interface TicketItemProps {
+  ticket: Ticket;
+}
+
+function TicketItem({ ticket }: TicketItemProps) {
+  const href = `/${ticket.id}`;
+  const { progress } = useTicketTimeRemaining({
+    createdAt: ticket.createdAt,
+    timeLimitSeconds: ticket.timeLimitSeconds,
+  });
+  const showAlert = ticket.question.critical || progress <= 0.25;
+
   return (
-    <li>
-      <button
-        onClick={() => setSelectedTicketId(ticket.id)}
-        className="flex items-center justify-between gap-2 rounded border border-neutral-300 px-3 py-2.5 w-full cursor-pointer"
+    <li className="flex w-full justify-center">
+      <Link
+        aria-label={`Open ticket for ${ticket.alien.name}`}
+        className="flex size-12 items-center justify-center focus-visible:outline-none"
+        href={href}
       >
-        <div className="flex items-center gap-2">
-          {ticket.question.critical && (
-            <AlertTriangle
-              aria-label="Critical ticket"
-              className="size-4 text-red-500"
+        <div className="relative size-12">
+          <AlienAvatar className="size-12" name={ticket.alien.name} />
+          {showAlert ? (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-10 rounded-full bg-red-500/35 animate-pulse"
             />
-          )}
-          <p className="text-sm font-medium">{ticket.alien.name}</p>
+          ) : null}
+          {showAlert ? (
+            <span className="sr-only">
+              {ticket.question.critical
+                ? "Critical ticket"
+                : "Ticket at 25 percent remaining"}
+            </span>
+          ) : null}
         </div>
-        <TicketTimer
-          createdAt={ticket.createdAt}
-          timeLimitSeconds={ticket.timeLimitSeconds}
-        />
-      </button>
+      </Link>
     </li>
   );
 }

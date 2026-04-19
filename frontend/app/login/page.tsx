@@ -1,13 +1,20 @@
 import type { ReactNode } from "react";
+import { Button as UIButton } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Surface } from "@/components/ui/surface";
+import { bodyTextStrong } from "@/lib/ui/recipes";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
   return (
-    <div>
+    <div className="flex min-h-full w-full flex-1 items-center justify-center p-4 sm:p-6">
       <Group>
-        This is login page
+        <p className={cn(bodyTextStrong(), "text-center")}>
+          This is login page
+        </p>
         <InputField />
         <InputField />
-        <Button />
+        <LoginButton />
       </Group>
     </div>
   );
@@ -18,17 +25,37 @@ interface GroupProps {
 }
 
 function Group(props: GroupProps) {
-  return <div className="flex flex-col gap-2">{props.children}</div>;
+  return (
+    <Surface
+      className="flex w-full max-w-sm flex-col gap-4"
+      density="compact"
+      shadow="default"
+      tone="panel"
+    >
+      {props.children}
+    </Surface>
+  );
 }
 
 function InputField() {
-  return <input className="w-fit border-2" placeholder="input field"></input>;
+  return (
+    <Input
+      className="rounded-panel-inner w-full border-white/20 bg-white shadow-surface"
+      size="lg"
+      placeholder="input field"
+    />
+  );
 }
 
-function Button() {
+function LoginButton() {
   return (
-    <button type="submit" className="w-fit p-2 border rounded-xl">
+    <UIButton
+      className="rounded-panel-inner w-full"
+      size="lg"
+      type="submit"
+      variant="surface"
+    >
       Login
-    </button>
+    </UIButton>
   );
 }

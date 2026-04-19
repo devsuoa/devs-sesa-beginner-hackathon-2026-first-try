@@ -8,6 +8,7 @@ import type {
   Ticket,
   TicketStatus,
 } from "@/lib/game-session/types";
+import { TICKET_STATUS } from "@/lib/game-session/types";
 
 export const config = {
   INITIAL_TICKET_INTERVAL_SECONDS: 20,
@@ -68,11 +69,13 @@ interface GameSessionState extends GameSession {
   resetSession: () => void;
   addTicket: (ticket: CreateTicketInput) => void;
   removeTicket: (ticketId: string) => void;
-  updateTicketStatus: (ticketId: string, status: TicketStatus) => void;
+  updateTicketStatus: (
+    ticketId: string,
+    status: TicketStatus,
+    responseText?: string,
+  ) => void;
   incrementStrikes: (amount?: number) => void;
   tick: (now?: number) => void;
-  selectedTicketId: string | null;
-  setSelectedTicketId: (id: string) => void;
 }
 
 function getNextTicketIntervalSeconds(currentIntervalSeconds: number) {
@@ -84,16 +87,24 @@ function getNextTicketIntervalSeconds(currentIntervalSeconds: number) {
 
 function isTicketExpired(ticket: Ticket, now: number) {
   return (
-    ticket.status === "pending" &&
+    ticket.status === TICKET_STATUS.AWAITING_RESPONSE &&
     now - ticket.createdAt >= ticket.timeLimitSeconds * 1000
   );
+}
+
+function getStatusDelta(status: TicketStatus) {
+  return {
+    resolved: status === TICKET_STATUS.CLOSED ? 1 : 0,
+    strikes: status === TICKET_STATUS.STRIKED ? 1 : 0,
+  };
 }
 
 function createTicket(input: CreateTicketInput): Ticket {
   return {
     id: createTicketId(),
     alien: input.alien,
-    status: "pending",
+    status: TICKET_STATUS.AWAITING_RESPONSE,
+    responseText: null,
     timeLimitSeconds: input.timeLimitSeconds,
     createdAt: input.createdAt ?? Date.now(),
     question: input.question,
@@ -119,8 +130,6 @@ function endSession({
   resolved,
 }: Pick<GameSession, "strikes" | "resolved">) {
   if (resolved >= config.QUOTA) {
-    window.alert("You win!");
-
     return {
       isActive: false,
       status: "win" as const,
@@ -128,8 +137,6 @@ function endSession({
   }
 
   if (strikes >= config.MAX_STRIKES) {
-    window.alert("You lose!");
-
     return {
       isActive: false,
       status: "loss" as const,
@@ -168,7 +175,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
     set((state) => ({
       tickets: state.tickets.filter((ticket) => ticket.id !== ticketId),
     })),
-  updateTicketStatus: (ticketId, status) =>
+  updateTicketStatus: (ticketId, status, responseText) =>
     set((state) => {
       const ticket = state.tickets.find(
         (candidate) => candidate.id === ticketId,
@@ -178,18 +185,22 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
         return state;
       }
 
-      if (status === "pending") {
-        return {
-          tickets: state.tickets.map((candidate) =>
-            candidate.id === ticketId ? { ...candidate, status } : candidate,
-          ),
-        };
-      }
+      const previousDelta = getStatusDelta(ticket.status);
+      const nextDelta = getStatusDelta(status);
+      const tickets = state.tickets.map((candidate) =>
+        candidate.id === ticketId
+          ? {
+              ...candidate,
+              status,
+              responseText: responseText ?? candidate.responseText,
+            }
+          : candidate,
+      );
 
       const nextState = {
-        tickets: state.tickets.filter((candidate) => candidate.id !== ticketId),
-        strikes: state.strikes + (status === "strike" ? 1 : 0),
-        resolved: state.resolved + (status === "success" ? 1 : 0),
+        tickets,
+        strikes: state.strikes + nextDelta.strikes - previousDelta.strikes,
+        resolved: state.resolved + nextDelta.resolved - previousDelta.resolved,
       };
 
       const sessionEnd = endSession(nextState);
@@ -215,10 +226,11 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       return;
     }
 
-    const remainingTickets = state.tickets.filter(
-      (ticket) => !isTicketExpired(ticket, now),
+    const expiredTickets = state.tickets.filter((ticket) =>
+      isTicketExpired(ticket, now),
     );
-    const expiredCount = state.tickets.length - remainingTickets.length;
+    const expiredTicketIds = new Set(expiredTickets.map((ticket) => ticket.id));
+    const expiredCount = expiredTickets.length;
     const lastTicketCreatedAt = state.lastTicketCreatedAt ?? now;
     const shouldCreateTicket =
       now - lastTicketCreatedAt >= state.ticketIntervalSeconds * 1000;
@@ -228,7 +240,11 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
     }
 
     const nextState = {
-      tickets: remainingTickets,
+      tickets: state.tickets.map((ticket) =>
+        expiredTicketIds.has(ticket.id)
+          ? { ...ticket, status: TICKET_STATUS.STRIKED }
+          : ticket,
+      ),
       strikes: state.strikes + expiredCount,
     };
     const sessionEnd = endSession({
@@ -252,7 +268,4 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
       }));
     });
   },
-
-  selectedTicketId: null as string | null,
-  setSelectedTicketId: (id: string) => set({ selectedTicketId: id }),
 }));

@@ -2,9 +2,22 @@
 
 @theme inline {
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --color-space-accent: #0600ab;
+  --color-space-accent-light: #977dff;
+  --color-space-bubble: #6a4df4;
+  --color-space-cream: #f2e6ee;
+  --color-space-night: #00033d;
+  --color-space-panel: #191c5b;
+  --radius-panel-outer: clamp(1.5rem, 0.25rem + 3.125vw, 4rem);
+  --radius-panel-inner: clamp(1.125rem, 0.6875rem + 1.0938vw, 2rem);
+  --radius-bubble: clamp(1.5rem, 1.25rem + 0.625vw, 2rem);
+  --shadow-surface: 0 0 1.5rem rgb(0 0 0 / 45%);
+  --shadow-surface-soft: 0 0 1.125rem rgb(0 0 0 / 45%);
+  --shadow-surface-strong: 0 0 2.75rem rgb(0 0 0 / 45%);
 }
 
-body {
-  @apply font-sans;
+@layer base {
+  body {
+    @apply relative font-sans;
+  }
 }
