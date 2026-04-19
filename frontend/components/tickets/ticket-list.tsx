@@ -12,6 +12,10 @@ export function TicketList() {
     (ticket) => ticket.status === TICKET_STATUS.AWAITING_RESPONSE,
   );
 
+  const setSelectedTicketId = useGameSessionStore(
+    (state) => state.setSelectedTicketId
+  );
+
   return (
     <ul className="m-0 flex w-full list-none flex-col items-center gap-3 p-0">
       {activeTickets.map((ticket) => (
