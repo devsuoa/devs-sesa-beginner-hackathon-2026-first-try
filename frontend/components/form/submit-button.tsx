@@ -14,7 +14,7 @@ export function SubmitButton({ label }: SubmitButtonProps) {
     <form.Subscribe selector={(state) => [state.isSubmitting, state.canSubmit]}>
       {([isSubmitting, canSubmit]) => (
         <Button
-          className="min-w-24"
+          className="min-w-24 self-start px-4 py-2 text-sm"
           disabled={!canSubmit || isSubmitting}
           type="submit"
           variant="primary"
