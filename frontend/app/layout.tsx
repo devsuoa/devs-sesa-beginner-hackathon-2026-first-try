@@ -4,7 +4,6 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { GameSessionProvider } from "@/components/providers/game-session";
 import { QueryProvider } from "@/components/providers/query";
-import { useGameSessionStore } from "@/lib/game-session/store";
 import "./globals.css";
 
 const urbanist = Urbanist({
