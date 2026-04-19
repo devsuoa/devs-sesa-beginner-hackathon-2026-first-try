@@ -1,6 +1,8 @@
 # Intergalactic Space Agency Helpdesk
 
-You are a human working at the Intergalactic Space Agency, pretending to be an alien at the helpdesk. Answer all tickets within their given time limits to reach the day's quota and clock out.
+You are a human working at the Intergalactic Space Agency, pretending to be an alien at the helpdesk. Answer all tickets within their given time limits to reach the day's quota and clock out. If you fail to fulfil your tickets, the aliens will suspect you are a human and dispose of you accordingly.
+
+Can you fulfil your tickets and clock out, or will you fall victim to the aliens' wrath?
 
 This project is built using Express, FastAPI, and Next.js 💫
 
