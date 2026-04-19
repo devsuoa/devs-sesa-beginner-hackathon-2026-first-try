@@ -1,6 +1,7 @@
 "use client";
 
 import { LoaderCircleIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useFormContext } from "@/lib/form-context";
 
 interface SubmitButtonProps {
@@ -12,17 +13,18 @@ export function SubmitButton({ label }: SubmitButtonProps) {
   return (
     <form.Subscribe selector={(state) => [state.isSubmitting, state.canSubmit]}>
       {([isSubmitting, canSubmit]) => (
-        <button
-          type="submit"
+        <Button
+          className="min-w-24"
           disabled={!canSubmit || isSubmitting}
-          className="border border-neutral-300 px-3 py-1 rounded text-sm disabled:opacity-50"
+          type="submit"
+          variant="primary"
         >
           {isSubmitting ? (
             <LoaderCircleIcon className="size-4 animate-spin" />
           ) : (
             label
           )}
-        </button>
+        </Button>
       )}
     </form.Subscribe>
   );

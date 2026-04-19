@@ -1,11 +1,11 @@
-import { Ticket } from "@/components/tickets/ticket";
+import { DashboardPage } from "@/components/dashboard/dashboard-page";
 
-export default async function TicketPage({
-  params,
-}: {
+interface TicketPageProps {
   params: Promise<{ ticketId: string }>;
-}) {
+}
+
+export default async function TicketPage({ params }: TicketPageProps) {
   const { ticketId } = await params;
 
-  return <Ticket ticketId={ticketId} />;
+  return <DashboardPage mode="response" ticketId={ticketId} />;
 }
