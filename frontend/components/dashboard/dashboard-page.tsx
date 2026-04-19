@@ -26,7 +26,7 @@ export function DashboardPage({ ticketId, mode }: DashboardPageProps) {
   }, [router, ticket, ticketId]);
 
   return (
-    <div className="grid min-w-0 flex-1 grid-cols-1 gap-4 text-space-cream xl:grid-cols-2 xl:grid-rows-[auto_minmax(0,1fr)]">
+    <div className="grid min-h-0 min-w-0 flex-1 overflow-hidden grid-cols-1 gap-4 text-space-cream xl:grid-cols-2 xl:grid-rows-[auto_minmax(0,1fr)]">
       <DashboardOverviewPanel ticket={ticket} />
       <DashboardWorkspacePanel mode={mode} ticket={ticket} />
     </div>

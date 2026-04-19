@@ -11,7 +11,7 @@ export function DashboardOverviewPanel({
   ticket,
 }: DashboardOverviewPanelProps) {
   return (
-    <section className="flex min-w-0 flex-1 flex-col xl:contents">
+    <section className="flex min-h-0 min-w-0 flex-1 flex-col xl:contents">
       <header className="mb-3 flex items-center justify-between sm:mb-4 xl:col-start-1 xl:row-start-1 xl:mb-0 xl:self-end">
         <div className="space-y-2">
           <h3 className="text-[clamp(1rem,2vw,1.875rem)] font-medium leading-none tracking-tight">
@@ -23,7 +23,7 @@ export function DashboardOverviewPanel({
         </div>
       </header>
 
-      <PanelCard className="flex-1 xl:col-start-1 xl:row-start-2">
+      <PanelCard className="min-h-0 flex-1 xl:col-start-1 xl:row-start-2">
         {ticket ? <TicketSummary ticket={ticket} /> : <Welcome />}
       </PanelCard>
     </section>

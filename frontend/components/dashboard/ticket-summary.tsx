@@ -41,6 +41,8 @@ export function TicketSummary({ ticket }: TicketSummaryProps) {
         <AlienAvatar
           className="mx-0 shrink-0 size-[clamp(4.5rem,11vw,6.5rem)]"
           name={ticket.alien?.name}
+          type={ticket.alien?.type}
+          variant={ticket.alien?.variant}
         />
         <div className="min-w-0 space-y-1.5">
           <p className="text-[clamp(1.25rem,2.5vw,1.5rem)] font-semibold leading-tight">

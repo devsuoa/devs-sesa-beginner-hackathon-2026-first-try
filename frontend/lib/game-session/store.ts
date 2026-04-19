@@ -2,6 +2,8 @@ import { customAlphabet } from "nanoid";
 import { create } from "zustand";
 import { getQuestion } from "@/api";
 import type {
+  AlienType,
+  AlienVariant,
   CreateTicketInput,
   GameSession,
   Question,
@@ -52,7 +54,8 @@ const ALIEN_NAMES = [
   "Mog",
 ];
 
-const ALIEN_TYPES = ["Rulix", "Grob", "Kindor"];
+const ALIEN_TYPES: readonly AlienType[] = ["Rulix", "Grob", "Kindor"];
+const ALIEN_VARIANTS: readonly AlienVariant[] = [0, 1];
 
 const initialGameSession: GameSession = {
   tickets: [],
@@ -101,6 +104,10 @@ function getStatusDelta(status: TicketStatus) {
   };
 }
 
+function getRandomArrayItem<Value>(values: readonly Value[]) {
+  return values[Math.floor(Math.random() * values.length)];
+}
+
 function createTicket(input: CreateTicketInput): Ticket {
   return {
     id: createTicketId(),
@@ -116,8 +123,9 @@ function createTicket(input: CreateTicketInput): Ticket {
 function createGeneratedTicket(createdAt: number, question: Question): Ticket {
   return createTicket({
     alien: {
-      name: ALIEN_NAMES[Math.floor(Math.random() * ALIEN_NAMES.length)],
-      type: ALIEN_TYPES[Math.floor(Math.random() * ALIEN_TYPES.length)],
+      name: getRandomArrayItem(ALIEN_NAMES),
+      type: getRandomArrayItem(ALIEN_TYPES),
+      variant: getRandomArrayItem(ALIEN_VARIANTS),
     },
     timeLimitSeconds: question.critical
       ? config.CRITICAL_TICKET_TIME_LIMIT_SECONDS

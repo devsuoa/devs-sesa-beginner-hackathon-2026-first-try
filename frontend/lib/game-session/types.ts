@@ -6,10 +6,13 @@ export const TICKET_STATUS = {
 
 export type TicketStatus = (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
 export type GameSessionStatus = "pending" | "win" | "loss";
+export type AlienType = "Rulix" | "Grob" | "Kindor";
+export type AlienVariant = 0 | 1;
 
 export interface Alien {
   name: string;
-  type: string;
+  type: AlienType;
+  variant: AlienVariant;
 }
 
 export interface Question {

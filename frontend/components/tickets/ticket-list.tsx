@@ -41,7 +41,12 @@ function TicketItem({ ticket }: TicketItemProps) {
         href={href}
       >
         <div className="relative size-12">
-          <AlienAvatar className="size-12" name={ticket.alien.name} />
+          <AlienAvatar
+            className="size-12"
+            name={ticket.alien.name}
+            type={ticket.alien.type}
+            variant={ticket.alien.variant}
+          />
           {showAlert ? (
             <span
               aria-hidden="true"
